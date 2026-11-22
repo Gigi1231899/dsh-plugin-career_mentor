@@ -21,7 +21,8 @@
     "skills/career-mentor/SKILL.md",
     "workspace-template/**/*",
     "locale/*.json",
-    "icon.svg"
+    "icon.svg",
+    "LICENSE"
   ],
   "dsh": {
     "bundle": {
@@ -31,15 +32,21 @@
   "scripts": {
     "test": "node --test test/*.test.js"
   },
-  "engines": {
-    "node": ">=22"
-  },
   "license": "MIT",
   "keywords": [
-    "dsh",
-    "plugin",
+    "dsh-plugin",
     "career",
     "education",
     "tools"
-  ]
+  ],
+  "repository": {
+  "type": "git",
+  "url": "git+https://github.com/Gigi1231899/dsh-plugin-career_mentor.git"
+  },
+  "homepage": "https://github.com/Gigi1231899/dsh-plugin-career_mentor#readme",
+  "bugs": "https://github.com/Gigi1231899/dsh-plugin-career_mentor/issues",
+  "engines": {
+    "node": ">=22",
+    "dsh": "=0.2.2-rc.3"
+  }
 }
