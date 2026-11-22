@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "major": "",
+  "grade": "",
+  "direction": null,
+  "direction_label": null,
+  "skills": {},
+  "goal_role": null,
+  "preference": [],
+  "hours_per_week": 10,
+  "deadline": null,
+  "negative_roles": [],
+  "updated_at": null
+}

@@ -1,0 +1,45 @@
+{
+  "name": "dsh-career-mentor",
+  "version": "0.1.0",
+  "description": "Three-mode DSH career mentor: Explore, Hotspot (native popup direction choice + a hotspot brief with job-ranked libraries, demand categories, new tools vs frameworks and Skill/Plugin recommendations), and Plan (skill-gap diagnosis and dynamic learning roadmaps).",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json",
+    "./skills/career-mentor/SKILL.md": "./skills/career-mentor/SKILL.md",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "src/**/*.js",
+    "cordis.patch.yml",
+    "README.md",
+    "API_CLAIMS.md",
+    "skills/career-mentor/SKILL.md",
+    "workspace-template/**/*",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "plugin",
+    "career",
+    "education",
+    "tools"
+  ]
+}

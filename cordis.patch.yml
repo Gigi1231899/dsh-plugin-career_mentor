@@ -1,0 +1,50 @@
+- insert:
+    # 工具插件：注册 14 个 career_* 工具（对所有模式可见）。
+    - id: dsh-career-mentor
+      name: dsh-career-mentor
+    # 原生弹窗单选工具：让模型用 ask_user_question 弹出岗位方向选择卡片。
+    # 宿主问答服务(dsh-user-questions)与客户端弹窗面板(dsh-client-ui-user-questions)
+    # 已由 base / web-app 默认补丁挂载，这里只补上模型可调用的工具行。
+    - id: tool-ask-user
+      name: "@deepseek-ai/dsh-tool-ask-user"
+    # 模式预设：让「职业模式」出现在 UI 的模式切换器里。
+    - id: preset-career
+      name: "@deepseek-ai/dsh-agent-preset"
+      config:
+        id: career-mentor
+        name: "职业导师模式"
+        description: "面向计算机方向的学生，支持你进行职业探索/热点探索/规划。"
+        order: 5
+        # 预设模式需要的插件，注入人格和指令，保证职业导师工作流的正确性。
+        plugins:
+          # 人格
+          - id: persona
+            name: "@deepseek-ai/dsh-persona"
+            config:
+              prefix: |-
+                你是面向高校学生的职业导师，使用 career_* 工具，并严格区分三个模式。
+
+                【模式判定】每次职业请求先调用 career_workspace_context，按用户意图与工作区状态进入对应模式：
+                - 探索模式（career_explore）：用户还不知道适合什么、不了解岗位在做什么。用 career_workspace_context 读状态后，调用 career_explore（传入 roles 与 skills_catalog）生成 3-5 个候选岗位画像和真实职位名，帮用户认识岗位；此模式不生成热点简报、不做规划。
+                - 热点模式（career_hotspot）：用户已选定岗位方向。此时先用原生 ask_user_question 弹出岗位方向单选卡片（选项：开发/运维/测试/产品经理），用户点选后调 career_set_direction 落盘，再调 career_direction_report 生成方向简报（热门库/包、需求类别、新工具 vs 新框架，以及按该岗位热度排序的 skill/plugin 推荐）。
+                - 规划模式（career_plan）：岗位已确认（profile.goal_role 存在）。用 career_diagnose 找技能差距，career_plan 绑定 deadline 生成路线图，再 recommend_resources / export_checklist，每周 review 重排。
+
+                【HITL 弹窗硬规则】profile.direction 为空、且用户要进入热点模式时，必须调用 ask_user_question 弹出选择卡片，不得用文本让用户回复数字、不得代选、不得跳过。问题用中文，四个选项 label 为 开发/运维/测试/产品经理，description 写明该方向一句话说明。用户点选答案返回后，先 career_set_direction 落盘，再 career_direction_report。
+
+                【通用硬规则】事实必须来自工具，不凭记忆回答；未定岗位不得规划；规划必须绑定 deadline；解释不得新增工具返回之外的事实；所有输出标注 data_as_of 与 stale；数据不足时说样本不足；技术热度只看本次快照当前值，缺指标显示 —。
+          # # agents.md注入上下文
+          # - id: agent-instructions
+          #   name: "@deepseek-ai/dsh-agent-instructions"
+          #   config:
+          #     maxBytes: 65536
+          # 时间上下文
+          - id: time-context
+            name: "@deepseek-ai/dsh-time-context"
+          # 技能文档：只在 career 模式挂载 skill-filesystem，
+          # 模型按需读取 skills/career-mentor/SKILL.md，而非启动即注入系统提示。
+          - id: career-skill-filesystem
+            name: "@deepseek-ai/dsh-skill-filesystem"
+            config:
+              providerName: dsh-career-mentor
+              includeDefaultRoots: false
+              bundledSkillDir: !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('dsh-career-mentor/package.json')), 'skills')
